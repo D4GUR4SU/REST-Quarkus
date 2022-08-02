@@ -1,8 +1,14 @@
 package com.github.dagurasu.quarkussocial.rest.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class CreateUserRequest {
 
+    @NotBlank(message="Name may not be blank")
     private String name;
+
+    @NotNull(message="Age may not be null")
     private Integer age;
 
     public String getName() {
