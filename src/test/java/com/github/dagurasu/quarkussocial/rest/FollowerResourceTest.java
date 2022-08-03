@@ -34,7 +34,7 @@ class FollowerResourceTest {
 
     @BeforeEach
     @Transactional
-    public void setuUp(){
+    public void setUp(){
 
         // standard user tests
         var user = new User();
