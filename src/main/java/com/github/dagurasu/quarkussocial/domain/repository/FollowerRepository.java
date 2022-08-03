@@ -6,7 +6,9 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.ws.rs.PathParam;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @ApplicationScoped
@@ -20,5 +22,11 @@ public class FollowerRepository implements PanacheRepository<Follower> {
         var result = query.firstResultOptional();
 
         return result.isPresent();
+    }
+
+    public List<Follower> findByUser(@PathParam("userId") Long userId){
+        var query = find("user.id", userId);
+        var list = query.list();
+        return list;
     }
 }

@@ -5,12 +5,15 @@ import com.github.dagurasu.quarkussocial.domain.model.User;
 import com.github.dagurasu.quarkussocial.domain.repository.FollowerRepository;
 import com.github.dagurasu.quarkussocial.domain.repository.UserRepository;
 import com.github.dagurasu.quarkussocial.rest.dto.FollowerRequest;
+import com.github.dagurasu.quarkussocial.rest.dto.FollowersPerUserResponse;
+import com.github.dagurasu.quarkussocial.rest.dto.FollowersResponse;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.stream.Collectors;
 
 @Path("/users/{userId}/followers")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,6 +35,10 @@ public class FollowerResource {
     @Transactional
     public Response followUser(@PathParam("userId") Long userId, FollowerRequest request){
 
+        if(userId.equals(request.getFollowerId())) {
+            return Response.status(Response.Status.CONFLICT).entity("You can't follow yourself!").build();
+        }
+
         var user = userRepository.findById(userId);
         if(user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -46,7 +53,26 @@ public class FollowerResource {
 
             repository.persist(entity);
         }
-
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    @GET
+    public Response listFollowers(@PathParam("userId") Long userId){
+
+        var user = userRepository.findById(userId);
+        if(user == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        var list = repository.findByUser(userId);
+        var response = new FollowersPerUserResponse();
+        response.setFollowersCount(list.size());
+
+        var followersList = list.stream()
+                .map(FollowersResponse::new)
+                .collect(Collectors.toList());
+
+        response.setContent(followersList);
+        return Response.ok(response).build();
     }
 }
