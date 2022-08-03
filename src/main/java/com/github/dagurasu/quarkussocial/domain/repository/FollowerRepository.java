@@ -7,9 +7,7 @@ import io.quarkus.panache.common.Parameters;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.PathParam;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 public class FollowerRepository implements PanacheRepository<Follower> {
@@ -24,9 +22,15 @@ public class FollowerRepository implements PanacheRepository<Follower> {
         return result.isPresent();
     }
 
-    public List<Follower> findByUser(@PathParam("userId") Long userId){
+    public List<Follower> findByUser(Long userId){
         var query = find("user.id", userId);
         var list = query.list();
         return list;
+    }
+
+    public void deleteByFollowerAndUser(Long followerId, Long userId) {
+
+        var params = Parameters.with("userId", userId).and("followerId", followerId);
+        delete("follower.id =:followerId and user.id =:userId", params);
     }
 }
