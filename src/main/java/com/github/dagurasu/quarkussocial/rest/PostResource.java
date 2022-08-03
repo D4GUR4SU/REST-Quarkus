@@ -60,7 +60,7 @@ public class PostResource {
 
         User user = repository.findById(id);
         if(user == null) {
-            return Response.status(Response.Status.NOT_FOUND).entity("You can't see these posts!").build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         if(followerId == null){
@@ -75,7 +75,7 @@ public class PostResource {
 
         boolean follows = followerRepository.follows(follower, user);
         if(!follows){
-            return Response.status(Response.Status.FORBIDDEN).build();
+            return Response.status(Response.Status.FORBIDDEN).entity("You can't see these posts!").build();
         }
 
         var query = postRepository.find("user_id", Sort.by("date_time", Sort.Direction.Descending), user);

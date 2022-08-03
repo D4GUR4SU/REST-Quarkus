@@ -3,14 +3,17 @@ package com.github.dagurasu.quarkussocial.rest;
 import com.github.dagurasu.quarkussocial.domain.model.User;
 import com.github.dagurasu.quarkussocial.domain.repository.UserRepository;
 import com.github.dagurasu.quarkussocial.rest.dto.CreateUserRequest;
+import com.github.dagurasu.quarkussocial.rest.dto.ResponseError;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Set;
 
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -30,12 +33,12 @@ public class UserResource {
     @Transactional
     public Response createUser(CreateUserRequest userRequest) {
 
-        /*Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
+        Set<ConstraintViolation<CreateUserRequest>> violations = validator.validate(userRequest);
         if (!violations.isEmpty()) {
             return ResponseError
                     .createFromValidation(violations)
                     .withStatusCode(ResponseError.UNPROCESSABLE_ENTITY_STATUS);
-        }*/
+        }
 
         User user = new User();
         user.setName(userRequest.getName());
